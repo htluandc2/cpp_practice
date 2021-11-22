@@ -1,53 +1,81 @@
 #include<iostream>
 using namespace std;
 
-char str[110];
-char max_p[110];
-char nplim_arr[110];
+# define END -1
 
-int len(char str[]) {
-	int i = 0;
-	for(i = 0; str[i] != '\0'; i++) {
+char c[110];
+int a[110];
+int a_max[110];
+int len;
+
+void make_mirror(int src[], int dst[]) {
+	for(int i = 0; i < len; i++) {
+		dst[i] = src[i];
 	}
-	return i;
-}
-
-
-
-bool is_greater(char s1[], char s2[]) {
-	int size = len(s1);
-	for(int i = 0; i < size; i++) {
-		if(s1[i] < s2[i]) return false;
+	for(int i = len/2; i < len; i++) {
+		dst[i] = src[len - i - 1];
 	}
-	return true;
 }
 
-void test(int k) {
-	char t[100];
+int cmp(int a[], int b[]) {
+	for(int i = 0; i < len; i++) {
+		if(a[i] != b[i]) return a[i] - b[i];
+	}
+	return 0;
 }
+
+// For debuging
+void print_arr(int a[], int len) {
+	for(int i = 0; i < len; i++) {
+		cout << a[i];
+	}
+	cout << "\n";
+}
+
+
 
 int main() {
 	freopen("Text.txt", "r", stdin);
-
-	int N;
-	cin >> str;
-	cout << len(str) << "\n";
-
-	// make max npalim
-	int size = len(str);
-	for(int i = 0; i <= size/2; i++) {
-		max_p[i] = str[i];
-		max_p[size-1-i] = str[i];
-	}
-	if(!is_greater(str, max_p)) {
-		cout << "hear";
-		max_p[size/2] -= 1;
+	cin >> c;
+	len = 0;
+	for(int i = 0; c[i] != '\0'; i++) {
+		a[len++] = c[i] - '0';
 	}
 
-	for(int i = 0; i <= size/2; i++) {
-		cout << max_p[i];
-	}
-	cout << "\n";
+	// cout << len << "\n";
+	// print_arr(a, len);
+	make_mirror(a, a_max);
+	// print_arr(a_max, len);
+	
+	bool includeMax = cmp(a_max, a) <= 0;
 
-	return 0;
+	int e = 0, s = 0, re = 0;
+	if(len % 2 == 1) {
+		e = 1;
+		s = len/2;
+	}
+	else {
+		e = 0;
+		s = len/2-1;
+	}
+
+	for(int i = s; i >= e; i--) {
+		int j = i;
+		re = 0;
+		a[j] = (a[j] + 9);
+		re = a[j] / 10;
+		a[j] %= 10;
+		j--;
+		// cout << a[j] << "\n";
+		while(j >= 0) {
+			a[j] = (a[j] + re);
+			re = a[j] / 10;
+			a[j] %= 10;
+			j--;
+			// cout << a[j] << "\n";
+		}
+	}
+	if(re != 0) cout << re;
+	if(!includeMax) a[s] -= 1;
+	print_arr(a, s+1);
 }
